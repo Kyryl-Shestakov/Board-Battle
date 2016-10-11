@@ -13,8 +13,6 @@ namespace Utility
         /// Used to determine how to lift a player according to vertical or horizontal movement
         /// </summary>
         private readonly DirectionResolution _directionResolver;
-        //private readonly Vector3 _source;
-        //private readonly Vector3 _destination;
         /// <summary>
         /// Movement vector
         /// </summary>
@@ -35,8 +33,6 @@ namespace Utility
         public MovementInterpolation(DirectionResolution directionResolver, Vector3 source, Vector3 destination, int stepCount)
         {
             _directionResolver = directionResolver;
-            //_source = source;
-            //_destination = destination;
             _difference = destination - source;
             _step = 1.0f/stepCount;
             //var distance = directionResolver.DetermineDistance(source, destination);
@@ -54,9 +50,8 @@ namespace Utility
         {
             for (float i = _step; i < 1.0f; i += _step)
             {
-                //var incrementedPosition = Vector3.Lerp(_source, _destination, i);
                 var incrementedPosition = Vector3.Lerp(Vector3.zero, _difference, i);
-                var liftedIncrementedPosition = ToTheCurve(incrementedPosition);
+                var liftedIncrementedPosition = TransformToTheCurve(incrementedPosition);
 
                 action(liftedIncrementedPosition);
                 yield return liftedIncrementedPosition;
@@ -71,7 +66,7 @@ namespace Utility
         /// </summary>
         /// <param name="origin">Position on a line</param>
         /// <returns>Position on a semicircle</returns>
-        public Vector3 ToTheCurve(Vector3 origin)
+        public Vector3 TransformToTheCurve(Vector3 origin)
         {
             var coordinate = Mathf.Abs(_directionResolver.DetermineLift(origin));
             return new Vector3(origin.x, origin.y + Mathf.Sqrt(_squaredRadius - Mathf.Pow(coordinate - _radius, 2.0f)), origin.z);
