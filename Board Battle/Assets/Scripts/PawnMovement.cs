@@ -42,6 +42,7 @@ public class PawnMovement : MonoBehaviour
         return movementInterpolator.Iterate(p =>
         {
             transform.position = startingPosition + p;
+            //transform.Translate(startingPosition + p); Wrong
             Debug.Log(startingPosition + p);
         });
     }
