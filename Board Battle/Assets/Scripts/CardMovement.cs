@@ -6,6 +6,8 @@ public class CardMovement : MonoBehaviour
 {
     public static float ProximityThreshold = 0.1f;
 
+    public float CardSpeed;
+
     public static bool AreNear(Vector3 a, Vector3 b)
     {
         var distance = Vector3.Distance(a, b);
@@ -15,29 +17,25 @@ public class CardMovement : MonoBehaviour
 
     public IEnumerator Move(Vector3 destinationPosition, Action<GameObject> postAction)
     {
-        var currentPosition = gameObject.transform.position;
-
-        //while (!AreNear(currentPosition, destinationPosition))
-        //{
-        //    var step = Vector3.Lerp(currentPosition, destinationPosition, Time.deltaTime);
-        //    //gameObject.transform.Translate(step);
-        //    gameObject.transform.position = step;
-        //    yield return step;
-        //}
+        var sourcePosition = gameObject.transform.position;
+        var currentInterpolant = Time.deltaTime;
 
         do
         {
-            var step = Vector3.Lerp(currentPosition, destinationPosition, Time.deltaTime);
-            //gameObject.transform.Translate(step);
-            gameObject.transform.position = step;
-            currentPosition = step;
-            yield return step;
-        }
-        while (!AreNear(currentPosition, destinationPosition));
+            var step = Vector3.Lerp(sourcePosition, destinationPosition, CardSpeed*currentInterpolant);
 
-        //gameObject.transform.Translate(destinationPosition);
+            gameObject.transform.position = step;
+
+            yield return step;
+            
+            currentInterpolant += Time.deltaTime;
+            Debug.Log(Time.deltaTime);
+        }
+        while (!AreNear(transform.position, destinationPosition));
+        
         gameObject.transform.position = destinationPosition;
-        postAction(gameObject);
         yield return destinationPosition;
+
+        postAction(gameObject);
     }
 }

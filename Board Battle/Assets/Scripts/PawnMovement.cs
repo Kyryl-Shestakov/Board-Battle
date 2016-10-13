@@ -43,7 +43,7 @@ public class PawnMovement : MonoBehaviour
         {
             transform.position = startingPosition + p;
             //transform.Translate(startingPosition + p); Wrong
-            Debug.Log(startingPosition + p);
+            //Debug.Log(startingPosition + p);
         });
     }
 
