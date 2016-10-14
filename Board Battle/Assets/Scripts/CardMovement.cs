@@ -15,16 +15,16 @@ public class CardMovement : MonoBehaviour
         return distance < ProximityThreshold;
     }
 
-    public IEnumerator Move(Vector3 destinationPosition, Action<GameObject> postAction)
+    public IEnumerator Move(Vector3 destinationPosition, Action<Transform> postAction)
     {
-        var sourcePosition = gameObject.transform.position;
+        var sourcePosition = transform.position;
         var currentInterpolant = Time.deltaTime;
 
         do
         {
             var step = Vector3.Lerp(sourcePosition, destinationPosition, CardSpeed*currentInterpolant);
 
-            gameObject.transform.position = step;
+            transform.position = step;
 
             yield return step;
             
@@ -32,9 +32,9 @@ public class CardMovement : MonoBehaviour
         }
         while (!AreNear(transform.position, destinationPosition));
         
-        gameObject.transform.position = destinationPosition;
+        transform.position = destinationPosition;
         yield return destinationPosition;
 
-        postAction(gameObject);
+        postAction(transform);
     }
 }

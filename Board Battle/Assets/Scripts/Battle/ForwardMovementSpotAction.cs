@@ -1,8 +1,10 @@
-﻿namespace Battle
+﻿using System;
+
+namespace Battle
 {
     public class ForwardMovementSpotAction : SpotAction
     {
-        public override void PerformAction()
+        public override void PerformAction(Action postAction)
         {
             throw new System.NotImplementedException();
         }

@@ -14,11 +14,18 @@ public class PawnMovement : MonoBehaviour
     /// Specifies the number of steps to take while moving from one spot to another
     /// </summary>
     public int StepCount;
+    /// <summary>
+    /// Returns a SpotAction component of the current spot 
+    /// </summary>
+    public SpotAction CurrentSpotAction
+    {
+        get { return _currentSpot.GetComponent<SpotAction>(); }
+    }
 
-	/// <summary>
+    /// <summary>
     /// Finds a reference to a starting spot as initialization
     /// </summary>
-	protected void Awake()
+    protected void Awake()
 	{
 	    _currentSpot = GameObject.Find("Start Spot").GetComponent<SpotConnection>();
 	}
@@ -38,7 +45,7 @@ public class PawnMovement : MonoBehaviour
         //var startingPosition = sourcePoint + PawnSpotOffset;
         var startingPosition = transform.position;
 
-        var directionResolver = _currentSpot.gameObject.GetComponent<StepOrientation>().DetermineDirection();
+        var directionResolver = _currentSpot.GetComponent<StepOrientation>().DetermineDirection();
         var movementInterpolator = new MovementInterpolation(directionResolver, sourcePoint, destinationPoint, StepCount);
 
         _currentSpot = destinationSpot.GetComponent<SpotConnection>();

@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Utility.CardUtility;
 
 public class CardPlacement : MonoBehaviour
 {
-    public const int CardWidth = 8;
-    public const int CardHalfWidth = CardWidth / 2;
-    public const int HandWidth = 64;
-    public const int HandHalfWidth = HandWidth/2;
-    public const float CardElevationOverHand = 0.01f;
-
-    protected CardHoldingManagement CardHolder;
+    public float CardWidth;
+    protected float CardHalfWidth;
+    public float HandWidth;
+    protected float HandHalfWidth;
+    public float CardElevationOverHand;
+    protected CardRotationResolution CardRotationResolver;
 
     void Awake()
     {
-        CardHolder = GetComponent<CardHoldingManagement>();
+        CardHalfWidth = CardWidth/2.0f;
+        HandHalfWidth = HandWidth/2.0f;
+        CardRotationResolver = GetComponent<CardRotationResolution>();
     }
 
     //public void PlaceTheCard(GameObject card)
@@ -20,10 +23,26 @@ public class CardPlacement : MonoBehaviour
     //    CardHolder.TakeTheCard(card);
     //}
 
-    public Vector3 DetermineCardPlace()
+    public Vector3 DetermineReceivedCardPlace(int cardCount)
     {
-        int offset = CardHolder.CardCount * CardWidth + CardHalfWidth - HandHalfWidth;
+        float offset = cardCount * CardWidth + CardHalfWidth - HandHalfWidth;
         Vector3 positionInHand = new Vector3(transform.position.x + offset, transform.position.y + CardElevationOverHand, transform.position.z);
         return positionInHand;
+    }
+
+    public void PlaceReceivedCard(CardMovement cardMover, int handCardCount, Action previousAction, Action nextAction)
+    {
+        var cardPositionInHand = DetermineReceivedCardPlace(handCardCount);
+
+        Action<Transform> postAction = cardTransform =>
+        {
+            //card.transform.Rotate(Quaternion.identity);
+            //card.transform.eulerAngles = frontFlipRotation;
+            CardRotationResolver.Rotate(cardTransform);
+            nextAction();
+        };
+
+        previousAction();
+        StartCoroutine(cardMover.Move(cardPositionInHand, postAction));
     }
 }

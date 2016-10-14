@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Battle
 {
@@ -6,9 +7,13 @@ namespace Battle
     {
         public SpotAction FirstSpotActionContainer;
         public SpotAction SecondSpotActionContainer;
-        public override void PerformAction()
+        public override void PerformAction(Action postAction)
         {
-            throw new System.NotImplementedException();
+            //TODO: High chance of failure
+            FirstSpotActionContainer.PerformAction(() =>
+            {
+                SecondSpotActionContainer.PerformAction(postAction);
+            });
         }
     }
 }
