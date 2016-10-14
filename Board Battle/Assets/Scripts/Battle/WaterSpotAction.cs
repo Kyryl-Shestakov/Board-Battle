@@ -4,9 +4,9 @@ namespace Battle
 {
     public class WaterSpotAction : SpotAction
     {
-        //void Awake()
-        //{
-        //    SpotBattleType = Color.blue;
-        //}
+        public override void PerformAction()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

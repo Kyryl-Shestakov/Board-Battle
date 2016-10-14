@@ -11,10 +11,8 @@ public class PawnMovement : MonoBehaviour
     /// </summary>
     private SpotConnection _currentSpot;
     /// <summary>
-    /// Specifies an offset from the center of a spot for the pawn to be placed on it 
+    /// Specifies the number of steps to take while moving from one spot to another
     /// </summary>
-    public Vector3 PawnSpotOffset;
-
     public int StepCount;
 
 	/// <summary>
@@ -25,7 +23,13 @@ public class PawnMovement : MonoBehaviour
 	    _currentSpot = GameObject.Find("Start Spot").GetComponent<SpotConnection>();
 	}
 
-    protected IEnumerator Move(Func<SpotConnection, GameObject> nextSpotResolver)
+    /// <summary>
+    /// Moves a pawn from one spot to another in small steps
+    /// </summary>
+    /// <param name="nextSpotResolver">Determines the next spot to land on</param>
+    /// <param name="postAction">Determines what to do after the movement</param>
+    /// <returns></returns>
+    public IEnumerator Move(Func<SpotConnection, GameObject> nextSpotResolver, Action postAction)
     {
         var destinationSpot = nextSpotResolver(_currentSpot);
 
@@ -42,13 +46,6 @@ public class PawnMovement : MonoBehaviour
         return movementInterpolator.Iterate(p =>
         {
             transform.position = startingPosition + p;
-            //transform.Translate(startingPosition + p); Wrong
-            //Debug.Log(startingPosition + p);
-        });
-    }
-
-    public void Handle()
-    {
-        StartCoroutine(Move(c => c.NextSpot));
+        }, postAction);
     }
 }

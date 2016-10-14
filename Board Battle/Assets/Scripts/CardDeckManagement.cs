@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using Utility;
 using Random = UnityEngine.Random;
+// ReSharper disable PossibleNullReferenceException
 
 public class CardDeckManagement : MonoBehaviour
 {
     public int CardCount;
+    public float CardElevation;
     public GameObject CardPrefab;
     public GameObject PlayerHand;
     public GameObject OpponentHand;
+    public Text Status;
 
     private Stack<Card> _drawingCardDeck;
 
@@ -19,9 +23,38 @@ public class CardDeckManagement : MonoBehaviour
     private const int MinStepCount = 1;
     private const int MaxStepCount = 10;
 
+    public event EventHandler CardsDealt;
+
+    //private DoubleExecutionCompletionEventResolution _resolver;
+
+    protected virtual void OnCardsDealt()
+    {
+        //_resolver.Resolve(() =>
+        //{
+        //    if (CardsDealt != null) CardsDealt(this, EventArgs.Empty);
+        //});
+        CardsDealt(this, EventArgs.Empty);
+    }
+
     void Awake()
     {
         _drawingCardDeck = FormCardDeck();
+
+        CardsDealt += (sender, args) =>
+        {
+            Delegate[] handlers = CardsDealt.GetInvocationList();
+            handlers.ToList().ForEach(d =>
+            {
+                CardsDealt -= d as EventHandler;
+            });
+            CardsDealt += (o, eventArgs) =>
+            {
+                GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(true);
+                SetStatusText("Roll the dice");
+            };
+        };
+        //_resolver = new DoubleExecutionCompletionEventResolution(() => {});
+        SetStatusText("Deal the cards");
     }
 
     Stack<Card> FormCardDeck()
@@ -47,31 +80,39 @@ public class CardDeckManagement : MonoBehaviour
 
     GameObject GenerateCardGameObject(Card card)
     {
-        var cardGameObject = Instantiate(CardPrefab);
+        var position = new Vector3(transform.position.x, transform.position.y + CardElevation, transform.position.z);
+        var cardGameObject = Instantiate(CardPrefab, position, CardPrefab.transform.rotation) as GameObject;
         cardGameObject.GetComponent<CardManagement>().FormCardStats(card);
         return cardGameObject;
     }
 
     public void Deal()
     {
+        //GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Deal Button").gameObject.SetActive(false);
+        SetStatusText("The cards are being dealt");
+
+        //Rotates the card of a Player for the front to be visible
         Action<GameObject> frontCardRotation = card => card.transform.eulerAngles = Vector3.zero;
+        //A stub that does not rotate a card for the Opponent's card to remain hidden (the back of a card is visible)
         Action<GameObject> backCardRotation = card =>
         {
             //card.transform.eulerAngles = card.transform.eulerAngles;
         };
 
+        //The cards to a Player and Opponent are dealt simultaneously but one at a time three times
+        //After that an event CardsDealt is triggered
         DealCardTo(PlayerHand, frontCardRotation, () =>
         {
             DealCardTo(PlayerHand, frontCardRotation, () =>
             {
-                DealCardTo(PlayerHand, frontCardRotation, () => {});
+                DealCardTo(PlayerHand, frontCardRotation, OnCardsDealt);
             });
         });
         DealCardTo(OpponentHand, backCardRotation, () =>
         {
             DealCardTo(OpponentHand, backCardRotation, () =>
             {
-                DealCardTo(OpponentHand, backCardRotation, () => { });
+                DealCardTo(OpponentHand, backCardRotation, OnCardsDealt);
             });
         });
     }
@@ -93,5 +134,10 @@ public class CardDeckManagement : MonoBehaviour
         };
 
         StartCoroutine(cardMovement.Move(cardPositionInHand, postAction));
+    }
+
+    void SetStatusText(string text)
+    {
+        Status.text = text;
     }
 }

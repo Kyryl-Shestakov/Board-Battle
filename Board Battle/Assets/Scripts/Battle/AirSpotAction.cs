@@ -4,9 +4,9 @@ namespace Battle
 {
     public class AirSpotAction : SpotAction
     {
-        //void Awake()
-        //{
-        //    SpotBattleType = Color.yellow;
-        //}
+        public override void PerformAction()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

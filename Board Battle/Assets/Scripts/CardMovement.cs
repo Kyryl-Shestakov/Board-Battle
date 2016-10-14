@@ -29,7 +29,6 @@ public class CardMovement : MonoBehaviour
             yield return step;
             
             currentInterpolant += Time.deltaTime;
-            Debug.Log(Time.deltaTime);
         }
         while (!AreNear(transform.position, destinationPosition));
         

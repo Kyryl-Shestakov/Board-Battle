@@ -45,8 +45,9 @@ namespace Utility
         /// Yields a set of positions on a normalized semicircle path
         /// </summary>
         /// <param name="action">Determines what to do with each position</param>
+        /// <param name="postAction">Determines what to do after the iteration</param>
         /// <returns>Vector3 enumerator</returns>
-        public IEnumerator Iterate(Action<Vector3> action)
+        public IEnumerator Iterate(Action<Vector3> action, Action postAction)
         {
             for (float i = _step; i < 1.0f; i += _step)
             {
@@ -59,6 +60,7 @@ namespace Utility
 
             action(_difference);
             yield return _difference;
+            postAction();
         }
 
         /// <summary>
