@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Battle
 {
@@ -17,6 +18,7 @@ namespace Battle
             var cardHoldingManager = actorController.CurrentHandManager;
             cardHoldingManager.IfNotFullElse(() =>
             {
+                GameObject.FindGameObjectWithTag("Status").GetComponent<Text>().text = "The card is being dealt";
                 cardDeckManager.DealCardTo(cardHoldingManager, postAction);
             }, postAction);
         }

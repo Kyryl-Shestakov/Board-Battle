@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class CardHoldingManagement : MonoBehaviour
 {
@@ -70,20 +71,32 @@ public class CardHoldingManagement : MonoBehaviour
         PickTheCard(_cards.First());
     }
 
+    public void PickRandomCard()
+    {
+        PickTheCard(_cards[Random.Range(0, _cards.Count)]);
+    }
+
     public void DiscardThePickedCard(Action nextAction)
     {
-        var index = _cards.IndexOf(_pickedCard);
-        _cards.Remove(_pickedCard);
+        var pickedCard = _pickedCard;
+        _pickedCard = null;
+        var index = _cards.IndexOf(pickedCard);
+        _cards.Remove(pickedCard);
+        var remainingCards = _cards.Skip(index);
+
+        CardPlaceManager.AdjustCardsInHand(remainingCards);
+        CardPlaceManager.MovePickedCardToDiscardedDeck(pickedCard, nextAction);
+    }
+
+    public GameObject HandOverPickedCard(Vector3 newPosition, Vector3 newRotation, Action postAction)
+    {
+        var pickedCard = _pickedCard;
+        _pickedCard = null;
+        var index = _cards.IndexOf(pickedCard);
+        _cards.Remove(pickedCard);
         var remainingCards = _cards.Skip(index);
         CardPlaceManager.AdjustCardsInHand(remainingCards);
-
-        var discardedCardDeckManager =
-            GameObject.Find("Discarded Card Deck").GetComponent<DiscardedCardDeckManagement>();
-        var cardPositionOverDiscardedCardDeck = new Vector3(discardedCardDeckManager.transform.position.x,
-            discardedCardDeckManager.transform.position.y + discardedCardDeckManager.CardElevation,
-            discardedCardDeckManager.transform.position.z);
-        StartCoroutine(_pickedCard.GetComponent<CardMovement>()
-            .Move(cardPositionOverDiscardedCardDeck,
-                t => discardedCardDeckManager.ReceiveCard(t.gameObject, nextAction)));
+        CardPlaceManager.BringPickedCardCloser(pickedCard, newPosition, newRotation, postAction);
+        return pickedCard;
     }
 }

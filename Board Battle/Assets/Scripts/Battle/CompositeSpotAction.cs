@@ -9,7 +9,6 @@ namespace Battle
         public SpotAction SecondSpotActionContainer;
         public override void PerformAction(Action postAction)
         {
-            //TODO: High chance of failure
             FirstSpotActionContainer.PerformAction(() =>
             {
                 SecondSpotActionContainer.PerformAction(postAction);

@@ -62,4 +62,30 @@ public class CardPlacement : MonoBehaviour
             StartCoroutine(card.Move(newPosition, cardTransform => { }));
         });
     }
+
+    public void MovePickedCardToDiscardedDeck(GameObject pickedCard, Action nextAction)
+    {
+        var discardedCardDeckManager =
+            GameObject.Find("Discarded Card Deck").GetComponent<DiscardedCardDeckManagement>();
+        var cardPositionOverDiscardedCardDeck = new Vector3(discardedCardDeckManager.transform.position.x,
+            discardedCardDeckManager.transform.position.y + discardedCardDeckManager.CardElevation,
+            discardedCardDeckManager.transform.position.z);
+        StartCoroutine(pickedCard.GetComponent<CardMovement>()
+            .Move(cardPositionOverDiscardedCardDeck,
+                t => discardedCardDeckManager.ReceiveCard(t.gameObject, nextAction)));
+    }
+
+    public void BringPickedCardCloser(GameObject pickedCard, Vector3 newPosition, Vector3 newRotation, Action nextAction)
+    {
+        var mainCameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        pickedCard.transform.SetParent(mainCameraTransform);
+        pickedCard.transform.eulerAngles = newRotation;
+        StartCoroutine(pickedCard.GetComponent<CardMovement>()
+            .Move(newPosition,
+                t =>
+                {
+                    t.SetParent(null);
+                    nextAction();
+                }));
+    }
 }

@@ -5,7 +5,7 @@ using Utility;
 
 public class DiscardedCardDeckManagement : MonoBehaviour
 {
-    public float CardElevation;
+    public float CardElevation { get; set; }
     private Stack<Card> _discardedCardDeck;
     
     void Awake()

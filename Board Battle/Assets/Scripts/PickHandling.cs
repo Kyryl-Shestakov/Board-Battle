@@ -7,7 +7,7 @@ public class PickHandling : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (CardPicker != null) CardPicker.PickTheCard(gameObject, GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>().CurrentHandManager);
+        if (CardPicker != null) CardPicker.PickTheCard(gameObject);
     }
 }
 

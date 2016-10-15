@@ -4,6 +4,6 @@ namespace Utility.CardUtility
 {
     public abstract class CardPicking
     {
-        public abstract void PickTheCard(GameObject card, CardHoldingManagement cardHoldingManager);
+        public abstract void PickTheCard(GameObject card);
     }
 }

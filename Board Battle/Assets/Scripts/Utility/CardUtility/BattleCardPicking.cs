@@ -2,11 +2,11 @@
 
 namespace Utility.CardUtility
 {
-    public class ReturnCardPicking : CardPicking
+    public class BattleCardPicking : CardPicking
     {
         public override void PickTheCard(GameObject card)
         {
-            var cardHoldingManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>().CurrentHandManager;
+            var cardHoldingManager = GameObject.Find("Player Hand").GetComponent<CardHoldingManagement>();
             cardHoldingManager.PickTheCard(card);
         }
     }
