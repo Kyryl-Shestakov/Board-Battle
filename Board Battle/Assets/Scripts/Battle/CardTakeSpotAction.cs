@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Battle
@@ -12,9 +13,12 @@ namespace Battle
         public override void PerformAction(Action postAction)
         {
             var actorController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>();
-            var cardDeckManager = actorController.CardDeckManager;
+            var cardDeckManager = actorController.DrawingCardDeckManager;
             var cardHoldingManager = actorController.CurrentHandManager;
-            cardDeckManager.DealCardTo(cardHoldingManager, postAction);
+            cardHoldingManager.IfNotFullElse(() =>
+            {
+                cardDeckManager.DealCardTo(cardHoldingManager, postAction);
+            }, postAction);
         }
     }
 }

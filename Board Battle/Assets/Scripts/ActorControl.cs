@@ -7,7 +7,7 @@ public class ActorControl : MonoBehaviour
 {
     public PawnMovement CurrentPawnMover;
     public CardHoldingManagement CurrentHandManager;
-    public CardDeckManagement CardDeckManager;
+    public DrawingCardDeckManagement DrawingCardDeckManager;
 
     public Text Status;
     public DiceRolling DiceRoller;

@@ -12,7 +12,6 @@ public class DiceRolling : MonoBehaviour
     {
         int rollOutcomeValue = Random.Range(MinStepCount, MaxStepCount + 1);
         DieRollValue.text = rollOutcomeValue.ToString();
-        //return rollOutcomeValue;
-        return 5;
+        return rollOutcomeValue;
     }
 }

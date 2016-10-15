@@ -6,6 +6,7 @@ using Utility;
 
 public class PawnMovement : MonoBehaviour
 {
+    public PawnMovement OpposingPawnMover;
     /// <summary>
     /// A spot the pawn resides upon currently
     /// </summary>

@@ -7,7 +7,7 @@ using Utility;
 using Random = UnityEngine.Random;
 // ReSharper disable PossibleNullReferenceException
 
-public class CardDeckManagement : MonoBehaviour
+public class DrawingCardDeckManagement : MonoBehaviour
 {
     public int CardCount;
     public float CardElevation;
@@ -93,14 +93,6 @@ public class CardDeckManagement : MonoBehaviour
 
         var playerHandCardHoldingManager = GameObject.Find("Player Hand").GetComponent<CardHoldingManagement>();
         var opponentHandCardHoldingManager = GameObject.Find("Opponent Hand").GetComponent<CardHoldingManagement>();
-
-        ////Rotates the card of a Player for the front to be visible
-        //Action<GameObject> frontCardRotation = card => card.transform.eulerAngles = Vector3.zero;
-        ////A stub that does not rotate a card for the Opponent's card to remain hidden (the back of a card is visible)
-        //Action<GameObject> backCardRotation = card =>
-        //{
-        //    //card.transform.eulerAngles = card.transform.eulerAngles;
-        //};
 
         //The cards to a Player and Opponent are dealt simultaneously but one at a time three times
         //After that an event CardsDealt is triggered
