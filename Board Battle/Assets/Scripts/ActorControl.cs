@@ -23,6 +23,7 @@ public class ActorControl : MonoBehaviour
 
     public event EventHandler CardsRevealed;
     public event EventHandler CardsDiscarded;
+    public event EventHandler CardsReplenished;
 
     protected virtual void OnCardsRevealed()
     {
@@ -32,6 +33,11 @@ public class ActorControl : MonoBehaviour
     protected virtual void OnCardsDiscarded()
     {
         CardsDiscarded(this, EventArgs.Empty);
+    }
+
+    protected virtual void OnCardsReplenished()
+    {
+        CardsReplenished(this, EventArgs.Empty);
     }
 
     public void GoForth()
@@ -65,8 +71,9 @@ public class ActorControl : MonoBehaviour
                     {
                         CurrentPawnMover.CurrentSpotAction.PerformAction(() =>
                         {
+                            SwitchCharacter();
                             GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(true);
-                            SetStatusText("Roll the dice");
+                            SetStatusText("Roll of the dice for " + CurrentPawnMover.CharacterName);
                         });
                     }
                 }));
@@ -91,14 +98,14 @@ public class ActorControl : MonoBehaviour
         var playerHandManager = GameObject.Find("Player Hand").GetComponent<CardHoldingManagement>();
         var opponentHandManager = GameObject.Find("Opponent Hand").GetComponent<CardHoldingManagement>();
 
-        CardsRevealed += (sender, args) =>
+        CardsRevealed += (sender1, args1) =>
         {
             Delegate[] handlers1 = CardsRevealed.GetInvocationList();
             handlers1.ToList().ForEach(d =>
             {
                 CardsRevealed -= d as EventHandler;
             });
-            CardsRevealed += (o, eventArgs) =>
+            CardsRevealed += (sender2, args2) =>
             {
                 Delegate[] handlers2 = CardsRevealed.GetInvocationList();
                 handlers2.ToList().ForEach(d =>
@@ -116,7 +123,29 @@ public class ActorControl : MonoBehaviour
 
                     DiscardBattleCards(() =>
                     {
-                        winningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
+                        CardsReplenished += (sender3, args3) =>
+                        {
+                            Delegate[] handlers3 = CardsReplenished.GetInvocationList();
+                            handlers3.ToList().ForEach(d =>
+                            {
+                                CardsReplenished -= d as EventHandler;
+                            });
+                            CardsReplenished += (o1, eventArgs1) =>
+                            {
+                                Delegate[] handlers4 = CardsReplenished.GetInvocationList();
+                                handlers4.ToList().ForEach(d =>
+                                {
+                                    CardsReplenished -= d as EventHandler;
+                                });
+                            };
+
+
+                            winningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
+
+                        };
+                        SetStatusText("The hands are being replenished");
+                        DrawingCardDeckManager.DealCardTo(CurrentHandManager, OnCardsReplenished);
+                        DrawingCardDeckManager.DealCardTo(CurrentHandManager.OpposingCardHoldingManager, OnCardsReplenished);
                     });
                 };
                 button.onClick.AddListener(buttonClickListener);
@@ -176,5 +205,11 @@ public class ActorControl : MonoBehaviour
         StartCoroutine(opponentCard.GetComponent<CardMovement>()
             .Move(positionOverDiscardedCardDeck,
                 t => { discardedCardDeckManagement.ReceiveCard(opponentCard, OnCardsDiscarded); }));
+    }
+
+    public void SwitchCharacter()
+    {
+        CurrentPawnMover = CurrentPawnMover.OpposingPawnMover;
+        CurrentHandManager = CurrentHandManager.OpposingCardHoldingManager;
     }
 }

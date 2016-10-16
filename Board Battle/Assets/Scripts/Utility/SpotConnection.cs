@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Linking
+namespace Utility
 {
     public class SpotConnection : MonoBehaviour
     {

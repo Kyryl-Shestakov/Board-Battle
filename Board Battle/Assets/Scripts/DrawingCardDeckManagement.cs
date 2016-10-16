@@ -50,7 +50,7 @@ public class DrawingCardDeckManagement : MonoBehaviour
             CardsDealt += (o, eventArgs) =>
             {
                 GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(true);
-                SetStatusText("Roll the dice");
+                SetStatusText("Roll of the dice for Player");
             };
         };
         //_resolver = new DoubleExecutionCompletionEventResolution(() => {});

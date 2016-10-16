@@ -2,11 +2,17 @@
 using UnityEngine;
 using System.Collections;
 using Battle;
-using Linking;
 using Utility;
 
 public class PawnMovement : MonoBehaviour
 {
+    /// <summary>
+    /// Used to distinguish between Player and Opponent
+    /// </summary>
+    public string CharacterName;
+    /// <summary>
+    /// Holds opposite pawn movement
+    /// </summary>
     public PawnMovement OpposingPawnMover;
     /// <summary>
     /// A spot the pawn resides upon currently
@@ -47,8 +53,8 @@ public class PawnMovement : MonoBehaviour
         //var startingPosition = sourcePoint + PawnSpotOffset;
         var startingPosition = transform.position;
 
-        var directionResolver = _currentSpot.GetComponent<StepOrientation>().DetermineDirection();
-        var movementInterpolator = new MovementInterpolation(directionResolver, sourcePoint, destinationPoint, StepCount);
+        //var directionResolver = _currentSpot.GetComponent<StepOrientation>().DetermineDirection();
+        var movementInterpolator = new MovementInterpolation(sourcePoint, destinationPoint, StepCount);
 
         _currentSpot = destinationSpot.GetComponent<SpotConnection>();
 
