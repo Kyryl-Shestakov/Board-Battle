@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using Battle;
 using Linking;
 using Utility;
 
@@ -41,7 +42,7 @@ public class PawnMovement : MonoBehaviour
     {
         var destinationSpot = nextSpotResolver(_currentSpot);
 
-        var sourcePoint = _currentSpot.gameObject.transform.position;
+        var sourcePoint = _currentSpot.transform.position;
         var destinationPoint = destinationSpot.transform.position;
         //var startingPosition = sourcePoint + PawnSpotOffset;
         var startingPosition = transform.position;

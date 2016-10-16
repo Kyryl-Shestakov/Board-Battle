@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Utility.CardUtility;
 
 namespace Battle
 {
@@ -7,7 +8,11 @@ namespace Battle
     {
         public override void PerformAction(Action postAction)
         {
-            throw new System.NotImplementedException();
+            Func<CardManagement, int> rankResolver = card => card.CardStats.EarthRank;
+            Func<CardManagement, CardManagement, WinningResolution> winningDetermination =
+                ObtainWinningDetermination(rankResolver);
+            
+            PickCardsForTheBattle("Earth", winningDetermination, postAction);
         }
     }
 }
