@@ -49,36 +49,55 @@ public class ActorControl : MonoBehaviour
         var queue = new Queue<Action>();
         Action pawnMovement = () =>
         {
-            StartCoroutine(CurrentPawnMover.Move(spotConnection => spotConnection.NextSpot,
-                () =>
-                {
-                    //try
-                    //{
-                    //    Action postAction = queue.Dequeue();
-                    //    postAction();
-                    //}
-                    //catch (InvalidOperationException)
-                    //{
-                    //    CurrentPawn.GetComponent<SpotAction>().PerformAction();
-                    //}
+            if (!(CurrentPawnMover.NextSpotAction is FinishSpotAction))
+            {
+                StartCoroutine(CurrentPawnMover.Move(spotConnection => spotConnection.NextSpot,
+                    () =>
+                    {
+                        //try
+                        //{
+                        //    Action postAction = queue.Dequeue();
+                        //    postAction();
+                        //}
+                        //catch (InvalidOperationException)
+                        //{
+                        //    CurrentPawn.GetComponent<SpotAction>().PerformAction();
+                        //}
 
-                    if (queue.Count != 0) //If there are movements left perform them
-                    {
-                        Action postAction = queue.Dequeue();
-                        postAction();
-                    }
-                    else //Perform actions defined by the landing spot
-                    {
-                        CurrentPawnMover.CurrentSpotAction.PerformAction(() =>
+                        if (queue.Count != 0) //If there are movements left perform them
                         {
-                            SwitchCharacter();
-                            GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(true);
-                            GameObject.FindGameObjectWithTag("CurrentCharacterText").GetComponent<Text>().text =
-                                CurrentPawnMover.CharacterName;
-                            SetStatusText("Roll the dice");
-                        });
-                    }
-                }));
+                            Action postAction = queue.Dequeue();
+                            postAction();
+                        }
+                        else //Perform actions defined by the landing spot
+                        {
+                            CurrentPawnMover.CurrentSpotAction.PerformAction(() =>
+                            {
+                                SwitchCharacter();
+                                GameObject.FindGameObjectWithTag("Interface")
+                                    .transform.FindChild("Roll Button")
+                                    .gameObject.SetActive(true);
+                                GameObject.FindGameObjectWithTag("CurrentCharacterText").GetComponent<Text>().text =
+                                    CurrentPawnMover.CharacterName;
+                                SetStatusText("Roll the dice");
+                            });
+                        }
+                    }));
+            }
+            else
+            {
+                CurrentPawnMover.CurrentSpotAction.PerformAction(() =>
+                {
+                    SwitchCharacter();
+                    GameObject.FindGameObjectWithTag("Interface")
+                        .transform.FindChild("Roll Button")
+                        .gameObject.SetActive(true);
+                    GameObject.FindGameObjectWithTag("CurrentCharacterText").GetComponent<Text>().text =
+                        CurrentPawnMover.CharacterName;
+                    SetStatusText("Roll the dice");
+                });
+            }
+            
         };
 
         for (int i = 0; i < stepCount; ++i)
@@ -139,12 +158,11 @@ public class ActorControl : MonoBehaviour
                                 {
                                     CardsReplenished -= d as EventHandler;
                                 });
+
+                                winningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
                             };
-
-
-                            winningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
-
                         };
+
                         SetStatusText("The hands are being replenished");
                         DrawingCardDeckManager.DealCardTo(CurrentHandManager, OnCardsReplenished);
                         DrawingCardDeckManager.DealCardTo(CurrentHandManager.OpposingCardHoldingManager, OnCardsReplenished);

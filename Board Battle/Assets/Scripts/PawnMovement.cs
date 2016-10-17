@@ -29,6 +29,20 @@ public class PawnMovement : MonoBehaviour
     {
         get { return _currentSpot.GetComponent<SpotAction>(); }
     }
+    /// <summary>
+    /// Returns a SpotAction component of the next spot 
+    /// </summary>
+    public SpotAction NextSpotAction
+    {
+        get { return _currentSpot.NextSpot.GetComponent<SpotAction>(); }
+    }
+    /// <summary>
+    /// Returns a SpotAction component of the previous spot 
+    /// </summary>
+    public SpotAction PreviousSpotAction
+    {
+        get { return _currentSpot.PreviousSpot.GetComponent<SpotAction>(); }
+    }
 
     /// <summary>
     /// Finds a reference to a starting spot as initialization

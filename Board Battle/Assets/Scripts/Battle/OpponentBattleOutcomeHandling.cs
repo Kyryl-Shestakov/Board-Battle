@@ -19,21 +19,28 @@ namespace Battle
                 StartCoroutine(pawnMover.Move(spotConnection => spotConnection.PreviousSpot,
                     () =>
                     {
-                        if (queue.Count != 0) //If there are movements left, perform them
+                        if (pawnMover.CurrentSpotAction is StartSpotAction)
                         {
-                            Action nextAction = queue.Dequeue();
-                            nextAction();
+                            postAction();
                         }
                         else
                         {
-                            //pawnMover.CurrentSpotAction.PerformAction(() =>
-                            //{
-                            //    GameObject.FindGameObjectWithTag("Interface")
-                            //        .transform.FindChild("Roll Button")
-                            //        .gameObject.SetActive(true);
-                            //    statusText.text = "Roll the dice";
-                            //});
-                            postAction();
+                            if (queue.Count != 0) //If there are movements left, perform them
+                            {
+                                Action nextAction = queue.Dequeue();
+                                nextAction();
+                            }
+                            else
+                            {
+                                //pawnMover.CurrentSpotAction.PerformAction(() =>
+                                //{
+                                //    GameObject.FindGameObjectWithTag("Interface")
+                                //        .transform.FindChild("Roll Button")
+                                //        .gameObject.SetActive(true);
+                                //    statusText.text = "Roll the dice";
+                                //});
+                                postAction();
+                            }
                         }
                     }));
             };
@@ -53,38 +60,57 @@ namespace Battle
             var statusText = GameObject.FindGameObjectWithTag("Status").GetComponent<Text>();
             statusText.text = "The pawn is moving";
 
-            var queue = new Queue<Action>();
-            Action pawnMovement = () =>
+            if (pawnMover.NextSpotAction is FinishSpotAction)
             {
                 StartCoroutine(pawnMover.Move(spotConnection => spotConnection.NextSpot,
                     () =>
                     {
-                        if (queue.Count != 0) //If there are movements left, perform them
-                        {
-                            Action nextAction = queue.Dequeue();
-                            nextAction();
-                        }
-                        else
-                        {
-                            //pawnMover.CurrentSpotAction.PerformAction(() =>
-                            //{
-                            //    GameObject.FindGameObjectWithTag("Interface")
-                            //        .transform.FindChild("Roll Button")
-                            //        .gameObject.SetActive(true);
-                            //    statusText.text = "Roll the dice";
-                            //});
-                            postAction();
-                        }
+                        //Handle losing situation
+                        statusText.text = "You lost!";
                     }));
-            };
-
-            for (int i = 0; i < forwardStepCount; ++i)
-            {
-                queue.Enqueue(pawnMovement);
             }
+            else
+            {
+                var queue = new Queue<Action>();
+                Action pawnMovement = () =>
+                {
+                    if (!(pawnMover.NextSpotAction is FinishSpotAction))
+                    {
+                        StartCoroutine(pawnMover.Move(spotConnection => spotConnection.NextSpot,
+                            () =>
+                            {
+                                if (queue.Count != 0) //If there are movements left, perform them
+                                {
+                                    Action nextAction = queue.Dequeue();
+                                    nextAction();
+                                }
+                                else
+                                {
+                                    //pawnMover.CurrentSpotAction.PerformAction(() =>
+                                    //{
+                                    //    GameObject.FindGameObjectWithTag("Interface")
+                                    //        .transform.FindChild("Roll Button")
+                                    //        .gameObject.SetActive(true);
+                                    //    statusText.text = "Roll the dice";
+                                    //});
+                                    postAction();
+                                }
+                            }));
+                    }
+                    else
+                    {
+                        postAction();
+                    }
+                };
 
-            Action action = queue.Dequeue();
-            action();
+                for (int i = 0; i < forwardStepCount; ++i)
+                {
+                    queue.Enqueue(pawnMovement);
+                }
+
+                Action action = queue.Dequeue();
+                action();
+            }
         }
 
         public override void HandleTie(Action postAction)

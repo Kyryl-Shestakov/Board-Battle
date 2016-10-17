@@ -6,7 +6,8 @@ namespace Battle
     {
         public override void PerformAction(Action postAction)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
+            postAction();
         }
     }
 }

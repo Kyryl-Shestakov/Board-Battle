@@ -41,7 +41,7 @@ namespace Battle
                 {
                     oppositeHandManager.PickRandomCard();
                     var statusText = GameObject.FindGameObjectWithTag("Status").GetComponent<Text>();
-                    statusText.text = "Pick a card to return to the deck";
+                    statusText.text = "A card is ready to be stolen";
 
                     var button = GameObject.FindGameObjectWithTag("Interface")
                         .transform.FindChild("Pick Button").GetComponent<Button>();
