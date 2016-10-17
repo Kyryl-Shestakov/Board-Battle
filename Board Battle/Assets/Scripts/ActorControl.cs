@@ -73,7 +73,9 @@ public class ActorControl : MonoBehaviour
                         {
                             SwitchCharacter();
                             GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(true);
-                            SetStatusText("Roll of the dice for " + CurrentPawnMover.CharacterName);
+                            GameObject.FindGameObjectWithTag("CurrentCharacterText").GetComponent<Text>().text =
+                                CurrentPawnMover.CharacterName;
+                            SetStatusText("Roll the dice");
                         });
                     }
                 }));
@@ -157,11 +159,11 @@ public class ActorControl : MonoBehaviour
         //TODO: Change the determination of vectors based on the card transform
         var newPositionForPlayerCard = new Vector3(17.0f, 37.0f, -12.5f);
         var newRotationForPlayerCard = new Vector3(-30.0f, 0.0f, 0.0f);
-        var playerCard = playerHandManager.HandOverPickedCard(newPositionForPlayerCard, newRotationForPlayerCard, OnCardsRevealed);
+        var playerCard = playerHandManager.ShowPickedCard(newPositionForPlayerCard, newRotationForPlayerCard, OnCardsRevealed);
 
         var newPositionForOpponentCard = new Vector3(27.0f, 37.0f, -12.5f);
         var newRotationForOpponentCard = new Vector3(-30.0f, 0.0f, 0.0f);
-        var opponentCard = opponentHandManager.HandOverPickedCard(newPositionForOpponentCard, newRotationForOpponentCard, OnCardsRevealed);
+        var opponentCard = opponentHandManager.ShowPickedCard(newPositionForOpponentCard, newRotationForOpponentCard, OnCardsRevealed);
 
         PlayerBattleCard = playerCard;
         OpponentBattleCard = opponentCard;

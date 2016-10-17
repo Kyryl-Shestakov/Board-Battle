@@ -88,7 +88,21 @@ public class CardHoldingManagement : MonoBehaviour
         CardPlaceManager.MovePickedCardToDiscardedDeck(pickedCard, nextAction);
     }
 
-    public GameObject HandOverPickedCard(Vector3 newPosition, Vector3 newRotation, Action postAction)
+    public GameObject HandOverPickedCard()
+    {
+        var pickedCard = _pickedCard;
+        _pickedCard = null;
+        var index = _cards.IndexOf(pickedCard);
+        _cards.Remove(pickedCard);
+        var remainingCards = _cards.Skip(index);
+
+        CardPlaceManager.AdjustCardsInHand(remainingCards);
+        //CardPlaceManager.MovePickedCardToDiscardedDeck(pickedCard, nextAction);
+
+        return pickedCard;
+    }
+
+    public GameObject ShowPickedCard(Vector3 newPosition, Vector3 newRotation, Action postAction)
     {
         var pickedCard = _pickedCard;
         _pickedCard = null;

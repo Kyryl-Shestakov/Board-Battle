@@ -14,9 +14,9 @@ namespace Utility
         /// </summary>
         private readonly Vector3 _difference;
         /// <summary>
-        /// A relative increment that a player has to move each step of a single movement 
+        /// A spped multiplier that determines how fast a pawn will move from one spot to another 
         /// </summary>
-        private readonly float _step;
+        private readonly float _speed;
         /// <summary>
         /// Radius of a movement semicircle path
         /// </summary>
@@ -26,11 +26,19 @@ namespace Utility
         /// </summary>
         private readonly float _squaredRadius;
 
-        public MovementInterpolation(Vector3 source, Vector3 destination, int stepCount)
+        public static float ProximityThreshold = 0.1f;
+
+        public static bool AreNear(Vector3 a, Vector3 b)
+        {
+            var distance = Vector3.Distance(a, b);
+
+            return distance < ProximityThreshold;
+        }
+
+        public MovementInterpolation(Vector3 source, Vector3 destination, float speed)
         {
             _difference = destination - source;
-            _step = 1.0f/stepCount;
-            //var distance = directionResolver.DetermineDistance(source, destination);
+            _speed = speed;
             var distance = _difference.magnitude;
             _radius = distance/2.0f;
             _squaredRadius = Mathf.Pow(_radius, 2.0f);
@@ -44,14 +52,28 @@ namespace Utility
         /// <returns>Vector3 enumerator</returns>
         public IEnumerator Iterate(Action<Vector3> action, Action postAction)
         {
-            for (float i = _step; i < 1.0f; i += _step)
+            var currentInterpolant = Time.deltaTime;
+            Vector3 incrementedPosition;
+
+            do
             {
-                var incrementedPosition = Vector3.Lerp(Vector3.zero, _difference, i);
+                incrementedPosition = Vector3.Lerp(Vector3.zero, _difference, _speed * currentInterpolant);
                 var liftedIncrementedPosition = TransformToTheCurve(incrementedPosition);
 
                 action(liftedIncrementedPosition);
                 yield return liftedIncrementedPosition;
+                currentInterpolant += Time.deltaTime;
             }
+            while (!AreNear(incrementedPosition, _difference));
+
+            //for (float i = _step; i < 1.0f; i += _step)
+            //{
+            //    var incrementedPosition = Vector3.Lerp(Vector3.zero, _difference, i);
+            //    var liftedIncrementedPosition = TransformToTheCurve(incrementedPosition);
+
+            //    action(liftedIncrementedPosition);
+            //    yield return liftedIncrementedPosition;
+            //}
 
             action(_difference);
             yield return _difference;

@@ -19,9 +19,9 @@ public class PawnMovement : MonoBehaviour
     /// </summary>
     private SpotConnection _currentSpot;
     /// <summary>
-    /// Specifies the number of steps to take while moving from one spot to another
+    /// Specifies the speed multiplier of for the pawn movement
     /// </summary>
-    public int StepCount;
+    public float PawnSpeed;
     /// <summary>
     /// Returns a SpotAction component of the current spot 
     /// </summary>
@@ -54,7 +54,7 @@ public class PawnMovement : MonoBehaviour
         var startingPosition = transform.position;
 
         //var directionResolver = _currentSpot.GetComponent<StepOrientation>().DetermineDirection();
-        var movementInterpolator = new MovementInterpolation(sourcePoint, destinationPoint, StepCount);
+        var movementInterpolator = new MovementInterpolation(sourcePoint, destinationPoint, PawnSpeed);
 
         _currentSpot = destinationSpot.GetComponent<SpotConnection>();
 
