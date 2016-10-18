@@ -63,19 +63,25 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
         for (int i = 0; i < CardCount; ++i)
         {
-            int airRank = Random.Range(MinStatRank, MaxStatRank + 1);
-            int earthRank = Random.Range(MinStatRank, MaxStatRank + 1);
-            int fireRank = Random.Range(MinStatRank, MaxStatRank + 1);
-            int waterRank = Random.Range(MinStatRank, MaxStatRank + 1);
-            int forwardStepCount = Random.Range(MinStepCount, MaxStepCount + 1);
-            int backwardStepCount = Random.Range(MinStepCount, MaxStepCount + 1);
-
-            Card card = new Card(airRank, earthRank, fireRank, waterRank, forwardStepCount, backwardStepCount);
-
+            Card card = CreateCard();
             cardDeck.Push(card);
         }
 
         return cardDeck;
+    }
+
+    Card CreateCard()
+    {
+        int airRank = Random.Range(MinStatRank, MaxStatRank + 1);
+        int earthRank = Random.Range(MinStatRank, MaxStatRank + 1);
+        int fireRank = Random.Range(MinStatRank, MaxStatRank + 1);
+        int waterRank = Random.Range(MinStatRank, MaxStatRank + 1);
+        int forwardStepCount = Random.Range(MinStepCount, MaxStepCount + 1);
+        int backwardStepCount = Random.Range(MinStepCount, MaxStepCount + 1);
+
+        Card card = new Card(airRank, earthRank, fireRank, waterRank, forwardStepCount, backwardStepCount);
+
+        return card;
     }
 
     GameObject GenerateCardGameObject(Card card)
@@ -114,6 +120,25 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
     public void DealCardTo(CardHoldingManagement cardHoldingManager, Action nextAction)
     {
+        if (_drawingCardDeck.Count == 0)
+        {
+
+            Debug.Log("Drawing card deck count: " + _drawingCardDeck.Count);
+
+            //GetComponent<MeshRenderer>().enabled = false;
+            var discardedCardDeckManager =
+                    GameObject.Find("Discarded Card Deck").GetComponent<DiscardedCardDeckManagement>();
+            var shuffledDeck = discardedCardDeckManager.EmptyTheDeck();
+
+            shuffledDeck.ForEach(card => _drawingCardDeck.Push(card));
+            //GetComponent<MeshRenderer>().enabled = true;
+        }
+
+        if (_drawingCardDeck.Count == 0)
+        {
+            _drawingCardDeck.Push(CreateCard());
+        }
+
         var cardBase = _drawingCardDeck.Pop();
         var cardGameObject = GenerateCardGameObject(cardBase);
         cardHoldingManager.TakeTheCard(cardGameObject, nextAction);

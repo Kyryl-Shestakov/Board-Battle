@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Utility;
 
 public class DiscardedCardDeckManagement : MonoBehaviour
@@ -21,5 +22,16 @@ public class DiscardedCardDeckManagement : MonoBehaviour
         _discardedCardDeck.Push(cardBase);
         DestroyObject(card);
         nextAction();
+    }
+
+    public List<Card> EmptyTheDeck()
+    {
+        var cards = _discardedCardDeck.ToList();
+
+        _discardedCardDeck.Clear();
+        GetComponent<MeshRenderer>().enabled = false;
+
+        var shuffledCards = cards;
+        return shuffledCards;
     }
 }
