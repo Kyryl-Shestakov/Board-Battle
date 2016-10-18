@@ -1,5 +1,5 @@
 ﻿using System;
-using Battle;
+using Actions;
 
 namespace Utility.CardUtility
 {

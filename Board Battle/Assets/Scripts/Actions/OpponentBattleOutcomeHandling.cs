@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Battle
+namespace Actions
 {
     public class OpponentBattleOutcomeHandling : BattleOutcomeHandling
     {

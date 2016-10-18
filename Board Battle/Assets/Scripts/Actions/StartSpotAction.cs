@@ -1,8 +1,9 @@
 ﻿using System;
+using UnityEngine;
 
-namespace Battle
+namespace Actions
 {
-    public class FinishSpotAction : SpotAction
+    public class StartSpotAction : SpotAction
     {
         public override void PerformAction(Action postAction)
         {

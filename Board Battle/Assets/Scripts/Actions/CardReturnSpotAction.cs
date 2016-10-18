@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Utility.CardUtility;
 
-namespace Battle
+namespace Actions
 {
     public class CardReturnSpotAction : SpotAction
     {

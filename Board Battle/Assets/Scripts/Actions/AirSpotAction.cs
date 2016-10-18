@@ -2,17 +2,18 @@
 using UnityEngine;
 using Utility.CardUtility;
 
-namespace Battle
+namespace Actions
 {
-    public class EarthSpotAction : SpotAction
+    public class AirSpotAction : SpotAction
     {
         public override void PerformAction(Action postAction)
         {
-            Func<CardManagement, int> rankResolver = card => card.CardStats.EarthRank;
+            Func<CardManagement, int> rankResolver = card => card.CardStats.AirRank;
             Func<CardManagement, CardManagement, WinningResolution> winningDetermination =
                 ObtainWinningDetermination(rankResolver);
-            
-            PickCardsForTheBattle("Earth", winningDetermination, postAction);
+
+            //TODO: Determine if something needs to be added to postAction
+            PickCardsForTheBattle("Air", winningDetermination, postAction);
         }
     }
 }

@@ -2,17 +2,17 @@
 using UnityEngine;
 using Utility.CardUtility;
 
-namespace Battle
+namespace Actions
 {
-    public class WaterSpotAction : SpotAction
+    public class FireSpotAction : SpotAction
     {
         public override void PerformAction(Action postAction)
         {
-            Func<CardManagement, int> rankResolver = card => card.CardStats.WaterRank;
+            Func<CardManagement, int> rankResolver = card => card.CardStats.FireRank;
             Func<CardManagement, CardManagement, WinningResolution> winningDetermination =
                 ObtainWinningDetermination(rankResolver);
-
-            PickCardsForTheBattle("Water", winningDetermination, postAction);
+            
+            PickCardsForTheBattle("Fire", winningDetermination, postAction);
         }
     }
 }

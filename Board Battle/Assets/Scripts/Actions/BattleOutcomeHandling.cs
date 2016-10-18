@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Battle
+namespace Actions
 {
     public abstract class BattleOutcomeHandling : MonoBehaviour
     {

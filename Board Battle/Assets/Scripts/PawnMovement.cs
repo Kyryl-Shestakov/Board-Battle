@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
-using Battle;
+using Actions;
 using Utility;
 
 public class PawnMovement : MonoBehaviour
