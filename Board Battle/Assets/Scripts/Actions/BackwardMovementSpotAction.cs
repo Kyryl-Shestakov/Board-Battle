@@ -11,7 +11,7 @@ namespace Actions
             var actorController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>();
             var pawnMover = actorController.CurrentPawnMover;
             var statusText = GameObject.FindGameObjectWithTag("Status").GetComponent<Text>();
-            statusText.text = "The pawn is moving to a previous black spot";
+            statusText.text = "The pawn is moving back";
 
             Action[] pawnMovements = new Action[1];
 

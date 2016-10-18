@@ -122,9 +122,6 @@ public class DrawingCardDeckManagement : MonoBehaviour
     {
         if (_drawingCardDeck.Count == 0)
         {
-
-            Debug.Log("Drawing card deck count: " + _drawingCardDeck.Count);
-
             //GetComponent<MeshRenderer>().enabled = false;
             var discardedCardDeckManager =
                     GameObject.Find("Discarded Card Deck").GetComponent<DiscardedCardDeckManagement>();
