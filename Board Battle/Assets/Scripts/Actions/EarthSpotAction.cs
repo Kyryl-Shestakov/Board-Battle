@@ -9,10 +9,12 @@ namespace Actions
         public override void PerformAction(Action postAction)
         {
             Func<CardManagement, int> rankResolver = card => card.CardStats.EarthRank;
-            Func<CardManagement, CardManagement, WinningResolution> winningDetermination =
-                ObtainWinningDetermination(rankResolver);
-            
-            PickCardsForTheBattle("Earth", winningDetermination, postAction);
+            //Func<CardManagement, CardManagement, WinningResolution> winningDetermination =
+            //    ObtainWinningDetermination(rankResolver);
+            Color color = Color.green;
+            string material = "Earth Material";
+
+            PickCardsForTheBattle("Earth", color, material, rankResolver, postAction);
         }
     }
 }

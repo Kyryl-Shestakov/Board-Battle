@@ -8,15 +8,9 @@ namespace Actions
 {
     public abstract class SpotAction : MonoBehaviour
     {
-        protected ActorControl ActorController; //TODO: figure out why is it null
-
-        //void Awake()
-        //{
-        //    ActorController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>();
-        //}
         public abstract void PerformAction(Action postAction);
 
-        public void PickCardsForTheBattle(string element, Func<CardManagement, CardManagement, WinningResolution> winningDetermination, Action postAction)
+        public void PickCardsForTheBattle(string element, Color color, string material, Func<CardManagement, int> rankResolver, Action postAction)
         {
             var actorController = GameObject.FindGameObjectWithTag("GameController").GetComponent<ActorControl>();
             var statusText = GameObject.FindGameObjectWithTag("Status").GetComponent<Text>();
@@ -36,7 +30,7 @@ namespace Actions
                 button.gameObject.SetActive(false);
                 button.onClick.RemoveAllListeners();
                 statusText.text = "The cards are being revealed";
-                actorController.RevealPickedCards(winningDetermination, postAction);
+                actorController.RevealPickedCards(color, material, rankResolver, postAction);
             };
             button.onClick.AddListener(buttonClickListener);
             button.gameObject.SetActive(true);

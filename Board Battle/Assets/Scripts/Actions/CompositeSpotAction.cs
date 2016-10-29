@@ -7,6 +7,7 @@ namespace Actions
     {
         public SpotAction FirstSpotActionContainer;
         public SpotAction SecondSpotActionContainer;
+
         public override void PerformAction(Action postAction)
         {
             FirstSpotActionContainer.PerformAction(() =>

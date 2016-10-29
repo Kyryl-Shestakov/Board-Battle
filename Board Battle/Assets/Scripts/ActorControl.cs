@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Actions;
+using Battle;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utility.CardUtility;
 
@@ -13,6 +15,7 @@ public class ActorControl : MonoBehaviour
 {
     public static GameObject PlayerBattleCard;
     public static GameObject OpponentBattleCard;
+    public static List<GameObject> BoardSceneGameObjects;
 
     public PawnMovement CurrentPawnMover;
     public CardHoldingManagement CurrentHandManager;
@@ -114,7 +117,7 @@ public class ActorControl : MonoBehaviour
         Status.text = text;
     }
 
-    public void RevealPickedCards(Func<CardManagement, CardManagement, WinningResolution> winningDetermination, Action postAction)
+    public void RevealPickedCards(Color battleColor, string shotBallMaterial, Func<CardManagement, int> rankResolver, Action postAction)
     {
         var playerHandManager = GameObject.Find("Player Hand").GetComponent<CardHoldingManagement>();
         var opponentHandManager = GameObject.Find("Opponent Hand").GetComponent<CardHoldingManagement>();
@@ -139,34 +142,50 @@ public class ActorControl : MonoBehaviour
                 {
                     button.gameObject.SetActive(false);
                     button.onClick.RemoveAllListeners();
-                    var winningResolver = winningDetermination(PlayerBattleCard.GetComponent<CardManagement>(),
-                        OpponentBattleCard.GetComponent<CardManagement>());
+                    //var winningResolver = winningDetermination(PlayerBattleCard.GetComponent<CardManagement>(),
+                    //    OpponentBattleCard.GetComponent<CardManagement>());
 
-                    DiscardBattleCards(() =>
+                    int playerRank = rankResolver(PlayerBattleCard.GetComponent<CardManagement>());
+                    int opponentRank = rankResolver(OpponentBattleCard.GetComponent<CardManagement>());
+                    BattleBootstrap battleBootstrapper = new BattleBootstrap(battleColor, shotBallMaterial, playerRank, opponentRank);
+                    BattleControl.BattleBootstrapper = battleBootstrapper;
+
+                    Action postBattleAction = () =>
                     {
-                        CardsReplenished += (sender3, args3) =>
+                        DiscardBattleCards(() =>
                         {
-                            Delegate[] handlers3 = CardsReplenished.GetInvocationList();
-                            handlers3.ToList().ForEach(d =>
+                            CardsReplenished += (sender3, args3) =>
                             {
-                                CardsReplenished -= d as EventHandler;
-                            });
-                            CardsReplenished += (o1, eventArgs1) =>
-                            {
-                                Delegate[] handlers4 = CardsReplenished.GetInvocationList();
-                                handlers4.ToList().ForEach(d =>
+                                Delegate[] handlers3 = CardsReplenished.GetInvocationList();
+                                handlers3.ToList().ForEach(d =>
                                 {
                                     CardsReplenished -= d as EventHandler;
                                 });
+                                CardsReplenished += (o1, eventArgs1) =>
+                                {
+                                    Delegate[] handlers4 = CardsReplenished.GetInvocationList();
+                                    handlers4.ToList().ForEach(d =>
+                                    {
+                                        CardsReplenished -= d as EventHandler;
+                                    });
 
-                                winningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
+                                    BattleControl.WinningResolver.Resolve(CurrentPawnMover.GetComponent<BattleOutcomeHandling>(), postAction);
+                                };
                             };
-                        };
 
-                        SetStatusText("The hands are being replenished");
-                        DrawingCardDeckManager.DealCardTo(CurrentHandManager, OnCardsReplenished);
-                        DrawingCardDeckManager.DealCardTo(CurrentHandManager.OpposingCardHoldingManager, OnCardsReplenished);
-                    });
+                            SetStatusText("The hands are being replenished");
+                            DrawingCardDeckManager.DealCardTo(CurrentHandManager, OnCardsReplenished);
+                            DrawingCardDeckManager.DealCardTo(CurrentHandManager.OpposingCardHoldingManager, OnCardsReplenished);
+                        });
+                    };
+
+                    BattleControl.AfterBattleAction = postBattleAction;
+                    //BattleControl.BoardWrapper = GameObject.Find("Board Scene Wrapper");
+                    List<GameObject> boardSceneGameObjects = FindObjectsOfType<GameObject>().Where(g => g.transform.parent == null).ToList();
+                    BoardSceneGameObjects = boardSceneGameObjects;
+                    boardSceneGameObjects.ForEach(g => g.SetActive(false));
+                    //BattleControl.BoardWrapper.SetActive(false);
+                    SceneManager.LoadSceneAsync("BattleScene", LoadSceneMode.Additive);
                 };
                 button.onClick.AddListener(buttonClickListener);
                 button.gameObject.SetActive(true);
