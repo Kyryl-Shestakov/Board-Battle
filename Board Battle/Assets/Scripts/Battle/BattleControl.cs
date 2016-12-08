@@ -26,11 +26,6 @@ namespace Battle
             opponentWeaponController.Impact = BattleBootstrapper.OriginalOpponentRank;
         }
 
-        //public void ConcludeBattle()
-        //{
-            
-        //}
-
         public void HandlePlayerWinning()
         {
             var cardStats = ActorControl.PlayerBattleCard.GetComponent<CardManagement>().CardStats;
@@ -50,18 +45,7 @@ namespace Battle
             StatusText.text = status;
             ProceedButton.gameObject.SetActive(true);
             StatusText.gameObject.SetActive(true);
-
-            //Destroy(GameObject.Find("Battle Scene Wrapper"));
-            
-            //SceneManager.UnloadScene("BattleScene");
-            //StartCoroutine(Proceed());
         }
-
-        //public IEnumerator Proceed()
-        //{
-        //    yield return new WaitForSeconds(1.0f);
-            
-        //}
 
         public void Proceed()
         {

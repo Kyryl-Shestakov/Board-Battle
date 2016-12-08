@@ -12,8 +12,6 @@ public class DrawingCardDeckManagement : MonoBehaviour
     public int CardCount;
     public float CardElevation;
     public GameObject CardPrefab;
-    //public GameObject PlayerHand;
-    //public GameObject OpponentHand;
     public Text Status;
 
     private Stack<Card> _drawingCardDeck;
@@ -25,14 +23,8 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
     public event EventHandler CardsDealt;
 
-    //private DoubleExecutionCompletionEventResolution _resolver;
-
     protected virtual void OnCardsDealt()
     {
-        //_resolver.Resolve(() =>
-        //{
-        //    if (CardsDealt != null) CardsDealt(this, EventArgs.Empty);
-        //});
         CardsDealt(this, EventArgs.Empty);
     }
 
@@ -40,6 +32,7 @@ public class DrawingCardDeckManagement : MonoBehaviour
     {
         _drawingCardDeck = FormCardDeck();
 
+        //Assign a handler that does nothing at first but assign another handler that activates a Roll button
         CardsDealt += (sender, args) =>
         {
             Delegate[] handlers = CardsDealt.GetInvocationList();
@@ -53,7 +46,6 @@ public class DrawingCardDeckManagement : MonoBehaviour
                 SetStatusText("Roll of the dice for Player");
             };
         };
-        //_resolver = new DoubleExecutionCompletionEventResolution(() => {});
         SetStatusText("Deal the cards");
     }
 
@@ -86,6 +78,7 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
     GameObject GenerateCardGameObject(Card card)
     {
+        //Cards are created at the place of a card deck
         var position = new Vector3(transform.position.x, transform.position.y + CardElevation, transform.position.z);
         var cardGameObject = Instantiate(CardPrefab, position, CardPrefab.transform.rotation) as GameObject;
         cardGameObject.GetComponent<CardManagement>().FormCardStats(card);
@@ -94,7 +87,6 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
     public void Deal()
     {
-        //GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Deal Button").gameObject.SetActive(false);
         SetStatusText("The cards are being dealt");
 
         var playerHandCardHoldingManager = GameObject.Find("Player Hand").GetComponent<CardHoldingManagement>();
@@ -120,17 +112,17 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
     public void DealCardTo(CardHoldingManagement cardHoldingManager, Action nextAction)
     {
+        //This branch refills the drawing card deck with cards from dicarded card deck
         if (_drawingCardDeck.Count == 0)
         {
-            //GetComponent<MeshRenderer>().enabled = false;
             var discardedCardDeckManager =
                     GameObject.Find("Discarded Card Deck").GetComponent<DiscardedCardDeckManagement>();
             var shuffledDeck = discardedCardDeckManager.EmptyTheDeck();
 
             shuffledDeck.ForEach(card => _drawingCardDeck.Push(card));
-            //GetComponent<MeshRenderer>().enabled = true;
         }
 
+        //Create a new card if the deck is still empty
         if (_drawingCardDeck.Count == 0)
         {
             _drawingCardDeck.Push(CreateCard());
@@ -138,6 +130,7 @@ public class DrawingCardDeckManagement : MonoBehaviour
 
         var cardBase = _drawingCardDeck.Pop();
         var cardGameObject = GenerateCardGameObject(cardBase);
+
         cardHoldingManager.TakeTheCard(cardGameObject, nextAction);
     }
 

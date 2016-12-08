@@ -64,10 +64,8 @@ public class PawnMovement : MonoBehaviour
 
         var sourcePoint = _currentSpot.transform.position;
         var destinationPoint = destinationSpot.transform.position;
-        //var startingPosition = sourcePoint + PawnSpotOffset;
         var startingPosition = transform.position;
-
-        //var directionResolver = _currentSpot.GetComponent<StepOrientation>().DetermineDirection();
+        
         var movementInterpolator = new MovementInterpolation(sourcePoint, destinationPoint, PawnSpeed);
 
         _currentSpot = destinationSpot.GetComponent<SpotConnection>();

@@ -45,29 +45,19 @@ public class ActorControl : MonoBehaviour
 
     public void GoForth()
     {
-        //GameObject.FindGameObjectWithTag("Interface").transform.FindChild("Roll Button").gameObject.SetActive(false);
         SetStatusText("The pawn is moving");
 
         int stepCount = DiceRoller.RollTheDie();
         var queue = new Queue<Action>();
         Action pawnMovement = () =>
         {
+            //Condition that checks if we are not at the finish
             if (!(CurrentPawnMover.NextSpotAction is FinishSpotAction))
             {
                 StartCoroutine(CurrentPawnMover.Move(spotConnection => spotConnection.NextSpot,
                     () =>
                     {
-                        //try
-                        //{
-                        //    Action postAction = queue.Dequeue();
-                        //    postAction();
-                        //}
-                        //catch (InvalidOperationException)
-                        //{
-                        //    CurrentPawn.GetComponent<SpotAction>().PerformAction();
-                        //}
-
-                        if (queue.Count != 0) //If there are movements left perform them
+                        if (queue.Count != 0) //If there are movements left, perform them
                         {
                             Action postAction = queue.Dequeue();
                             postAction();
@@ -103,13 +93,14 @@ public class ActorControl : MonoBehaviour
             
         };
 
+        //Move required number of steps
         for (int i = 0; i < stepCount; ++i)
         {
             queue.Enqueue(pawnMovement);
         }
 
         Action action = queue.Dequeue();
-        action();
+        action(); //Starts the movement of a pawn
     }
 
     protected void SetStatusText(string text)
