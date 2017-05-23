@@ -57,7 +57,7 @@ public class PawnMovement : MonoBehaviour
     /// </summary>
     /// <param name="nextSpotResolver">Determines the next spot to land on</param>
     /// <param name="postAction">Determines what to do after the movement</param>
-    /// <returns></returns>
+    /// <returns>An IEnumerator for a coroutine</returns>
     public IEnumerator Move(Func<SpotConnection, GameObject> nextSpotResolver, Action postAction)
     {
         var destinationSpot = nextSpotResolver(_currentSpot);

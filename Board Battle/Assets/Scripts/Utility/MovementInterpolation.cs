@@ -66,15 +66,6 @@ namespace Utility
             }
             while (!AreNear(incrementedPosition, _difference));
 
-            //for (float i = _step; i < 1.0f; i += _step)
-            //{
-            //    var incrementedPosition = Vector3.Lerp(Vector3.zero, _difference, i);
-            //    var liftedIncrementedPosition = TransformToTheCurve(incrementedPosition);
-
-            //    action(liftedIncrementedPosition);
-            //    yield return liftedIncrementedPosition;
-            //}
-
             action(_difference);
             yield return _difference;
             postAction();
@@ -87,7 +78,6 @@ namespace Utility
         /// <returns>Position on a semicircle</returns>
         public Vector3 TransformToTheCurve(Vector3 origin)
         {
-            //var coordinate = Mathf.Abs(_directionResolver.DetermineLift(origin));
             var increment = Mathf.Sqrt(Mathf.Pow(origin.x, 2.0f) + Mathf.Pow(origin.z, 2.0f));
             return new Vector3(origin.x, origin.y + Mathf.Sqrt(_squaredRadius - Mathf.Pow(increment - _radius, 2.0f)), origin.z);
         }
